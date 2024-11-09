@@ -3,6 +3,10 @@ import unittest
 from leafnode import LeafNode
 
 
+def debug_print(node):
+    if False:
+        print(node)
+
 class TestLeafNode(unittest.TestCase):
     def test_p_value(self):
         node = LeafNode("p", value="What a para")
@@ -11,7 +15,7 @@ class TestLeafNode(unittest.TestCase):
         self.assertIsNone(node.children)
         self.assertIsNone(node.props)
         self.assertEqual(node.to_html(), "<p>What a para</p>")
-        print(node)
+        debug_print(node)
 
     def test_a_href_value(self):
         node = LeafNode("a", "Click me!", props={"href": "https://boot.dev"})
