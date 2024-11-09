@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from textnode_parse import split_nodes_delimiter
+from textnode_parse import *
 
 class TestTextNodeParse(unittest.TestCase):
     def test_text_only(self):
@@ -55,6 +55,64 @@ class TestTextNodeParse(unittest.TestCase):
         old_nodes = [TextNode("`some code", TextType.TEXT)]
         self.assertRaises(Exception, split_nodes_delimiter, old_nodes, "`", TextType.CODE)
 
+    def test_split_nodes_link(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        expected = [
+            TextNode("This is text with a link ", TextType.TEXT),
+            TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode(
+                "to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"
+            ),
+        ]
+        self.assertEqual(new_nodes, expected)
 
+    def test_split_nodes_link_no_link(self):
+        old_nodes = [
+            TextNode(
+                "This is text with no link",
+                TextType.TEXT
+            ),
+            TextNode(
+                " bold text ",
+                TextType.BOLD
+            )
+        ]
+        new_nodes = split_nodes_link(old_nodes)
+        self.assertEqual(new_nodes, old_nodes)
+
+    def test_split_nodes_image(self):
+        node = TextNode(
+            "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        expected = [
+            TextNode("This is text with a ", TextType.TEXT),
+            TextNode("rick roll", TextType.IMAGE, "https://i.imgur.com/aKaOqIh.gif"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("obi wan", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+        ]
+        self.assertEqual(new_nodes, expected)
+
+    def test_split_nodes_image_no_image(self):
+        old_nodes = [
+            TextNode(
+                "This is text with no image",
+                TextType.TEXT
+            ),
+            TextNode(
+                " bold text ",
+                TextType.BOLD
+            )
+        ]
+        new_nodes = split_nodes_image(old_nodes)
+        self.assertEqual(new_nodes, old_nodes)
+
+ 
 if __name__ == "__main__":
     unittest.main()
