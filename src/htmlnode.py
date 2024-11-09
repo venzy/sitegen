@@ -17,3 +17,11 @@ class HTMLNode:
     
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(<{self.tag}>, {self.props_to_html()}, {self.value}, #children: {len(self.children) if self.children is not None else 0})'
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, HTMLNode):
+            return NotImplemented
+        return self.tag == other.tag and \
+            self.value == other.value and \
+            self.props == other.props and \
+            self.children == other.children
