@@ -155,7 +155,7 @@ class TestBlockParse(unittest.TestCase):
         self.assertEqual(block_type, "paragraph")
 
     def test_block_type_ordered_multiline_skip(self):
-        # repeated number (apparently valid in real markdown?)
+        # skipped number (apparently valid in real markdown?)
         text = '1. first\n3. second'
         block_type = block_to_block_type(text)
         self.assertEqual(block_type, "paragraph")
