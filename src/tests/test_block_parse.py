@@ -1,6 +1,6 @@
 import unittest
 
-from block_parse import *
+from parse.block_parse import *
 
 
 class TestBlockParse(unittest.TestCase):

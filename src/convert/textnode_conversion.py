@@ -1,5 +1,5 @@
-from textnode import TextNode, TextType
-from leafnode import LeafNode
+from node.textnode import TextNode, TextType
+from node.leafnode import LeafNode
 
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     match text_node.text_type:
@@ -12,8 +12,12 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         case TextType.CODE:
             return LeafNode("code", text_node.text)
         case TextType.LINK:
+            if text_node.url is None:
+                raise ValueError("Text node with TextType.LINK is expected to have a URL")
             return LeafNode("a", text_node.text, {"href": text_node.url})
         case TextType.IMAGE:
+            if text_node.url is None:
+                raise ValueError("Text node with TextType.IMAGE is expected to have a URL")
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise ValueError(f'Unrecognised TextType: "{text_node.text_type}"')

@@ -1,6 +1,6 @@
 import unittest
 
-from link_parse import *
+from parse.link_parse import *
 
 
 class TestLinkParse(unittest.TestCase):

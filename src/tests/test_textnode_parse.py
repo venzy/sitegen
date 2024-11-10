@@ -1,7 +1,7 @@
 import unittest
 
-from textnode import TextNode, TextType
-from textnode_parse import *
+from node.textnode import TextNode, TextType
+from parse.textnode_parse import *
 
 class TestTextNodeParse(unittest.TestCase):
     def test_text_only(self):

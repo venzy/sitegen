@@ -1,5 +1,5 @@
-from textnode import *
-from link_parse import *
+from node.textnode import *
+from parse.link_parse import *
 
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
     new_nodes: list[TextNode] = []

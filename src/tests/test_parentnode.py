@@ -1,7 +1,7 @@
 import unittest
 
-from leafnode import LeafNode
-from parentnode import ParentNode
+from node.leafnode import LeafNode
+from node.parentnode import ParentNode
 
 
 def debug_print(node):

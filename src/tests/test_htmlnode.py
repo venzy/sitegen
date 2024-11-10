@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from node.htmlnode import HTMLNode
 
 
 def debug_print(node):
