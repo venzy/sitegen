@@ -44,7 +44,7 @@ def code_to_html_node(block: str) -> ParentNode:
     return ParentNode("pre", [LeafNode("code", block.lstrip("`\n").rstrip("\n`"))])
 
 def quote_to_html_node(block: str) -> LeafNode:
-    lines = [line.lstrip('>') for line in block.splitlines()]
+    lines = [line.lstrip('> ') for line in block.splitlines()]
     return LeafNode("blockquote", "\n".join(lines))
 
 def unordered_list_to_html_node(block: str) -> ParentNode:

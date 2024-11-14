@@ -106,17 +106,17 @@ class TestBlockParse(unittest.TestCase):
         self.assertEqual(block_type, "code")
 
     def test_block_type_quote(self):
-        text = '>The raven'
+        text = '> The raven'
         block_type = block_to_block_type(text)
         self.assertEqual(block_type, "quote")
 
     def test_block_type_quote_multiline(self):
-        text = '>The raven\n>- Some guy'
+        text = '> The raven\n> - Some guy'
         block_type = block_to_block_type(text)
         self.assertEqual(block_type, "quote")
 
     def test_block_type_quote_multiline_fallback_to_paragraph(self):
-        text = '>The raven\n>- Some guy\nNot a quote'
+        text = '> The raven\n> - Some guy\n>Not a quote'
         block_type = block_to_block_type(text)
         self.assertEqual(block_type, "paragraph")
 

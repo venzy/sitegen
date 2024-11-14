@@ -41,7 +41,7 @@ class TestMarkdownConversion(unittest.TestCase):
         self.assertEqual(converted, expected)
 
     def test_quote_block(self):
-        markdown = ">This is a\n>multi-line\n>quote block"
+        markdown = "> This is a\n> multi-line\n> quote block"
         converted = markdown_to_html_node(markdown)
         expected = ParentNode("div", [
             LeafNode("blockquote", "This is a\nmulti-line\nquote block")

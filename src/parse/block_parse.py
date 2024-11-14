@@ -40,7 +40,7 @@ def block_to_block_type(block: str) -> str:
 
     block_lines = block.splitlines()
 
-    quote_lines = re.findall(r"^>(.*)$", block, re.MULTILINE)
+    quote_lines = re.findall(r"^> (.*)$", block, re.MULTILINE)
     if len(quote_lines) == len(block_lines):
         return "quote"
 
