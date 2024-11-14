@@ -41,19 +41,37 @@ def heading_to_html_node(block: str) -> LeafNode:
     return LeafNode(f'h{level}', block[level + 1:])
 
 def code_to_html_node(block: str) -> ParentNode:
-    return ParentNode("pre", [LeafNode("code", block.lstrip("```").rstrip("```"))])
+    return ParentNode("pre", [LeafNode("code", block.lstrip("`\n").rstrip("\n`"))])
 
 def quote_to_html_node(block: str) -> LeafNode:
     lines = [line.lstrip('>') for line in block.splitlines()]
     return LeafNode("blockquote", "\n".join(lines))
 
 def unordered_list_to_html_node(block: str) -> ParentNode:
-    items = [re.sub(r'^[-*] ', '', line) for line in block.splitlines()]
-    return ParentNode("ul", [LeafNode("li", item) for item in items])
+    block_items = [re.sub(r'^[-*] ', '', line) for line in block.splitlines()]
+    # Each item could be one or more text nodes
+    html_items: list[HTMLNode] = []
+    for item in block_items:
+        textnodes = text_to_textnodes(item)
+        if len(textnodes) > 1:
+            html_items.append(ParentNode("li", [text_node_to_html_node(node) for node in textnodes]))
+        else:
+            html_items.append(LeafNode("li", item))
+
+    return ParentNode("ul", html_items)
 
 def ordered_list_to_html_node(block: str) -> ParentNode:
-    items = [re.sub(r'^\d+\. ', '', line) for line in block.splitlines()]
-    return ParentNode("ol", [LeafNode("li", item) for item in items])
+    block_items = [re.sub(r'^\d+\. ', '', line) for line in block.splitlines()]
+    # Each item could be one or more text nodes
+    html_items: list[HTMLNode] = []
+    for item in block_items:
+        textnodes = text_to_textnodes(item)
+        if len(textnodes) > 1:
+            html_items.append(ParentNode("li", [text_node_to_html_node(node) for node in textnodes]))
+        else:
+            html_items.append(LeafNode("li", item))
+
+    return ParentNode("ol", html_items)
 
 def paragraph_to_html_node(block: str) -> ParentNode:
     textnodes = text_to_textnodes(block)

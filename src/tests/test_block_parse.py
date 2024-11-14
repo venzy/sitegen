@@ -4,6 +4,10 @@ from parse.block_parse import *
 
 
 class TestBlockParse(unittest.TestCase):
+    ######################################################################
+    # Markdown to blocks tests
+    ######################################################################
+
     def test_empty(self):
         text = ""
         extracted = markdown_to_blocks(text)
@@ -34,6 +38,12 @@ class TestBlockParse(unittest.TestCase):
         expected = ["some text\nmore text", "new block"]
         self.assertEqual(extracted, expected)
 
+    def test_two_blocks_no_preserve_leading_whitespace(self):
+        text = "some text\n  more text\n\n    new block"
+        extracted = markdown_to_blocks(text)
+        expected = ["some text\nmore text", "new block"]
+        self.assertEqual(extracted, expected)
+
     def test_two_blocks_trailing_newline(self):
         text = "some text\nmore text\n\nnew block\n"
         extracted = markdown_to_blocks(text)
@@ -45,6 +55,16 @@ class TestBlockParse(unittest.TestCase):
         extracted = markdown_to_blocks(text)
         expected = ["some text\nmore text", "new block"]
         self.assertEqual(extracted, expected)
+
+    def test_code_multiline_preserve_leading_whitespace(self):
+        text = '```print("Hello, world!")\n    sys.exit()```'
+        extracted = markdown_to_blocks(text)
+        expected = ['```print("Hello, world!")\n    sys.exit()```']
+        self.assertEqual(extracted, expected)
+
+    ######################################################################
+    # Block type tests
+    ######################################################################
 
     def test_block_type_paragraph(self):
         text = "some text"
@@ -160,6 +180,11 @@ class TestBlockParse(unittest.TestCase):
         block_type = block_to_block_type(text)
         self.assertEqual(block_type, "paragraph")
 
+    def test_extract_title(self):
+        text = 'rubbish\n\n# Heading 1\n\n# Also Heading 1'
+        extracted = extract_title(text)
+        expected = "Heading 1"
+        self.assertEqual(extracted, expected)
 
 if __name__ == "__main__":
     unittest.main()

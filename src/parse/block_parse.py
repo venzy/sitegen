@@ -4,18 +4,26 @@ def markdown_to_blocks(markdown: str) -> list[str]:
     blocks: list[str] = []
 
     in_block: bool = False
+    in_code_block: bool = False
     block_lines: list[str] = []
     for line in markdown.splitlines():
-        line = line.strip()
+        if not in_code_block:
+            line = line.strip()
+
         if line == "":
             if not in_block:
                 continue
             else:
                 in_block = False
+                if in_code_block:
+                    raise Exception("No closing ``` for code block")
+
                 blocks.append("\n".join(block_lines))
                 block_lines = []
         else:
             in_block = True
+            if line.startswith("```"):
+                in_code_block = not in_code_block
             block_lines.append(line)
 
     if len(block_lines) > 0:
@@ -53,3 +61,10 @@ def block_to_block_type(block: str) -> str:
         return "ordered_list"
 
     return "paragraph"
+
+def extract_title(markdown: str) -> str:
+    heading_match = re.search(r"^# (.*)$", markdown, re.MULTILINE)
+    if heading_match is None:
+        raise Exception("Couldn't find a level 1 heading in markdown")
+    
+    return heading_match.group(1)
