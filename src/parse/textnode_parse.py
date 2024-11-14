@@ -75,11 +75,37 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     
     return new_nodes
 
+def split_nodes_task(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes: list[TextNode] = []
+    for old_node in old_nodes:
+        if old_node is None:
+            pass
+        elif old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+        else:
+            remainder = old_node.text
+            while remainder != "":
+                (prefix, value, suffix) = remainder.partition("[ ]")
+                if prefix == remainder:
+                    (prefix, value, suffix) = remainder.partition("[x]")
+                if prefix == remainder:
+                    break
+                else:
+                    if prefix != "":
+                        new_nodes.append(TextNode(prefix, TextType.TEXT))
+                    new_nodes.append(TextNode(value, TextType.CHECKBOX))
+                    remainder = suffix
+            if remainder != "":
+                new_nodes.append(TextNode(remainder, TextType.TEXT))
+    
+    return new_nodes
+
 def text_to_textnodes(text: str) -> list[TextNode]:
     nodes: list[TextNode] = [TextNode(text, TextType.TEXT)]
 
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
+    nodes = split_nodes_task(nodes)
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)

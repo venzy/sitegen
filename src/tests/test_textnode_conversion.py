@@ -41,3 +41,15 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(text_node)
         expected_html_node = LeafNode("img", "", {"src": "https://boot.dev/boots.png", "alt": "an image"})
         self.assertEqual(html_node, expected_html_node)
+
+    def test_checkbox(self):
+        text_node = TextNode("[ ]", TextType.CHECKBOX)
+        html_node = text_node_to_html_node(text_node)
+        expected_html_node = LeafNode("input", "", {"type": "checkbox"})
+        self.assertEqual(html_node, expected_html_node)
+
+    def test_checkbox_checked(self):
+        text_node = TextNode("[x]", TextType.CHECKBOX)
+        html_node = text_node_to_html_node(text_node)
+        expected_html_node = LeafNode("input", "", {"type": "checkbox", "checked": "checked"})
+        self.assertEqual(html_node, expected_html_node)

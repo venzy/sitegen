@@ -112,6 +112,18 @@ class TestTextNodeParse(unittest.TestCase):
         ]
         new_nodes = split_nodes_image(old_nodes)
         self.assertEqual(new_nodes, old_nodes)
+    
+    def test_split_nodes_task(self):
+        node = TextNode("preamble [ ] Task 1\n[x] Task 2", TextType.TEXT)
+        new_nodes = split_nodes_task([node])
+        expected = [
+            TextNode("preamble ", TextType.TEXT),
+            TextNode("[ ]", TextType.CHECKBOX),
+            TextNode(" Task 1\n", TextType.TEXT),
+            TextNode("[x]", TextType.CHECKBOX),
+            TextNode(" Task 2", TextType.TEXT)
+        ]
+        self.assertEqual(new_nodes, expected)
 
     def test_text_to_textnodes(self):
         text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"

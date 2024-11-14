@@ -19,5 +19,10 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
             if text_node.url is None:
                 raise ValueError("Text node with TextType.IMAGE is expected to have a URL")
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
+        case TextType.CHECKBOX:
+            props = {"type": "checkbox"}
+            if text_node.text == "[x]":
+                props["checked"] = "checked"
+            return LeafNode("input", "", props)
         case _:
             raise ValueError(f'Unrecognised TextType: "{text_node.text_type}"')
