@@ -57,12 +57,12 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         elif old_node.text_type != TextType.TEXT:
             new_nodes.append(old_node)
         else:
-            images = extract_markdown_links(old_node.text)
-            if len(images) == 0:
+            links = extract_markdown_links(old_node.text)
+            if len(links) == 0:
                 new_nodes.append(old_node)
             else:
                 remainder = old_node.text
-                for (title, url) in images:
+                for (title, url) in links:
                     (prefix, _, suffix) = remainder.partition(f'[{title}]({url})')
                     if prefix == remainder:
                         raise Exception("We expect to find the link!")

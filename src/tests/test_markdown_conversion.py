@@ -4,7 +4,7 @@ from convert.markdown_conversion import *
 from node.leafnode import *
 
 def debug_print(text):
-    if True:
+    if False:
         print(text)
 
 class TestMarkdownConversion(unittest.TestCase):
@@ -17,6 +17,19 @@ class TestMarkdownConversion(unittest.TestCase):
             ])
             debug_print(converted.to_html())
             self.assertEqual(converted, expected)
+    
+    def test_heading_fancy(self):
+        markdown = "### The *Struggle* of Good vs. Evil"
+        converted = markdown_to_html_node(markdown)
+        expected = ParentNode("div", [
+            ParentNode("h3", [
+                LeafNode(None, "The "),
+                LeafNode("i", "Struggle"),
+                LeafNode(None, " of Good vs. Evil")
+            ])
+        ])
+        debug_print(converted.to_html())
+        self.assertEqual(converted, expected)
 
     def test_code_block(self):
         markdown = "```This is a\nmulti-line\ncode block```"

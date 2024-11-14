@@ -30,7 +30,7 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
 
     return result_node
 
-def heading_to_html_node(block: str) -> LeafNode:
+def heading_to_html_node(block: str) -> HTMLNode:
     level = 0
     for c in block:
         if c == '#':
@@ -38,7 +38,11 @@ def heading_to_html_node(block: str) -> LeafNode:
         else:
             break
     
-    return LeafNode(f'h{level}', block[level + 1:])
+    textnodes = text_to_textnodes(block[level + 1:])
+    if len(textnodes) > 1:
+        return ParentNode(f'h{level}', [text_node_to_html_node(node) for node in textnodes])
+    else:
+        return LeafNode(f'h{level}', block[level + 1:])
 
 def code_to_html_node(block: str) -> ParentNode:
     return ParentNode("pre", [LeafNode("code", block.lstrip("`\n").rstrip("\n`"))])

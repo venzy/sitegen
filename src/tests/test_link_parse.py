@@ -33,6 +33,11 @@ class TestLinkParse(unittest.TestCase):
         expected = [("rick roll", "https://i.imgur.com/aKaOqIh.gif")]
         self.assertEqual(extracted, expected)
 
+    def test_standalone_link(self):
+        text = "[Back home](/)"
+        extracted = extract_markdown_links(text)
+        expected = [("Back home", "/")]
+        self.assertEqual(extracted, expected)
 
 if __name__ == "__main__":
     unittest.main()

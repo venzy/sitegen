@@ -6,7 +6,7 @@ from parse.block_parse import extract_title
 
 def main():
     copy_tree("static", "public")
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursive("content", "template.html", "public")
 
 def copy_tree(source_dir: str, dest_dir: str):
     if os.path.exists(dest_dir):
@@ -50,5 +50,23 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
 
     with open(dest_path, 'w') as dest_file:
         dest_file.write(output_html)
+
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str):
+    if not os.path.exists(dir_path_content):
+        raise Exception(f"Could not find source directory {dir_path_content}")
+
+    if not os.path.exists(dest_dir_path):
+        os.makedirs(dest_dir_path)
+
+    for path in os.listdir(dir_path_content):
+        source_path = os.path.join(dir_path_content, path)
+        dest_path = os.path.join(dest_dir_path, path)
+        if os.path.isfile(source_path):
+            (dest_file, _) = os.path.splitext(dest_path)
+            dest_file += ".html"
+            generate_page(source_path, template_path, dest_file)
+        else:
+            # Assume it's a directory
+            generate_pages_recursive(source_path, template_path, dest_path)
 
 main()
