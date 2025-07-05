@@ -3,6 +3,7 @@ from convert.textnode_conversion import text_node_to_html_node
 from node.htmlnode import HTMLNode
 from node.leafnode import LeafNode
 from node.parentnode import ParentNode
+from node.textnode import TextType
 from parse.block_parse import markdown_to_blocks, block_to_block_type
 from parse.textnode_parse import text_to_textnodes
 
@@ -48,8 +49,8 @@ def code_to_html_node(block: str) -> ParentNode:
     return ParentNode("pre", [LeafNode("code", block.lstrip("`\n").rstrip("\n`"))])
 
 def quote_to_html_node(block: str) -> LeafNode:
-    lines = [line.lstrip('> ') for line in block.splitlines()]
-    return LeafNode("blockquote", "\n".join(lines))
+    lines = [re.sub(r"^>\s?", "", line) for line in block.splitlines()]
+    return LeafNode("blockquote", "<br/>".join(lines))
 
 def unordered_list_to_html_node(block: str) -> ParentNode:
     block_items = [re.sub(r'^[-*] ', '', line) for line in block.splitlines()]
@@ -57,7 +58,7 @@ def unordered_list_to_html_node(block: str) -> ParentNode:
     html_items: list[HTMLNode] = []
     for item in block_items:
         textnodes = text_to_textnodes(item)
-        if len(textnodes) > 1:
+        if len(textnodes) > 1 or (len(textnodes) == 1 and textnodes[0].text_type != TextType.TEXT):
             html_items.append(ParentNode("li", [text_node_to_html_node(node) for node in textnodes]))
         else:
             html_items.append(LeafNode("li", item))

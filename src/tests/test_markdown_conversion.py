@@ -57,7 +57,16 @@ class TestMarkdownConversion(unittest.TestCase):
         markdown = "> This is a\n> multi-line\n> quote block"
         converted = markdown_to_html_node(markdown)
         expected = ParentNode("div", [
-            LeafNode("blockquote", "This is a\nmulti-line\nquote block")
+            LeafNode("blockquote", "This is a<br/>multi-line<br/>quote block")
+        ])
+        debug_print(converted.to_html())
+        self.assertEqual(converted, expected)
+
+    def test_quote_block_blank_in_middle(self):
+        markdown = "> \"I am in fact a Hobbit in all but size.\"\n>\n> -- J.R.R. Tolkien"
+        converted = markdown_to_html_node(markdown)
+        expected = ParentNode("div", [
+            LeafNode("blockquote", "\"I am in fact a Hobbit in all but size.\"<br/><br/>-- J.R.R. Tolkien")
         ])
         debug_print(converted.to_html())
         self.assertEqual(converted, expected)
@@ -155,7 +164,7 @@ class TestMarkdownConversion(unittest.TestCase):
         self.assertEqual(converted, expected)
     
     def test_paragraph(self):
-        markdown = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        markdown = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         converted = markdown_to_html_node(markdown)
         expected = ParentNode("div", [
             ParentNode("p", [
@@ -176,3 +185,16 @@ class TestMarkdownConversion(unittest.TestCase):
         debug_print(converted.to_html())
         self.assertEqual(converted, expected)
     
+    def test_link_in_list(self):
+        #markdown = "- [Why Glorfindel is More Impressive than Legolas](/blog/glorfindel)\n- [Why Tom Bombadil Was a Mistake](/blog/tom)\n- [The Unparalleled Majesty of \"The Lord of the Rings\"](/blog/majesty)"
+        markdown = "- [Why Glorfindel is More Impressive than Legolas](/blog/glorfindel)"
+        converted = markdown_to_html_node(markdown)
+        expected = ParentNode("div", [
+            ParentNode("ul", [
+                ParentNode("li", [
+                    LeafNode("a", "Why Glorfindel is More Impressive than Legolas", {"href": "/blog/glorfindel"}),
+                ]),
+            ]),
+        ])
+        debug_print(converted.to_html())
+        self.assertEqual(converted, expected)

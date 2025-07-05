@@ -40,15 +40,15 @@ def block_to_block_type(block: str) -> str:
 
     block_lines = block.splitlines()
 
-    quote_lines = re.findall(r"^> (.*)$", block, re.MULTILINE)
+    quote_lines = re.findall(r"^>(?: (.*)|$)", block, re.MULTILINE)
     if len(quote_lines) == len(block_lines):
         return "quote"
 
-    ul_dash_lines = re.findall(r"^[-] (.*)$", block, re.MULTILINE)
+    ul_dash_lines = re.findall(r"^[-](?: (.*)|)$", block, re.MULTILINE)
     if len(ul_dash_lines) == len(block_lines):
         return "unordered_list"
 
-    ul_asterisk_lines = re.findall(r"^[*] (.*)$", block, re.MULTILINE)
+    ul_asterisk_lines = re.findall(r"^[*](?: (.*)|)$", block, re.MULTILINE)
     if len(ul_asterisk_lines) == len(block_lines):
         return "unordered_list"
 
