@@ -1,12 +1,17 @@
 import os
 import shutil
+import sys
 
 from convert.markdown_conversion import markdown_to_html_node
 from parse.block_parse import extract_title
 
 def main():
-    copy_tree("static", "public")
-    generate_pages_recursive("content", "template.html", "public")
+    base_path = "/"
+    if len(sys.argv) > 1:
+        base_path = sys.argv[1]
+
+    copy_tree("static", "docs")
+    generate_pages_recursive(base_path, "content", "template.html", "docs")
 
 def copy_tree(source_dir: str, dest_dir: str):
     if os.path.exists(dest_dir):
@@ -27,7 +32,7 @@ def copy_tree(source_dir: str, dest_dir: str):
             # Assume it's a directory
             copy_tree(source_path, os.path.join(dest_dir, path))
 
-def generate_page(from_path: str, template_path: str, dest_path: str):
+def generate_page(base_path: str, from_path: str, template_path: str, dest_path: str):
     print(f"Generating page from {from_path} to {dest_path} using template {template_path}")
 
     markdown = ""
@@ -43,6 +48,7 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
     title = extract_title(markdown)
 
     output_html = template.replace("{{ Title }}", title).replace("{{ Content }}", content_html)
+    output_html = output_html.replace("href=\"/", f"href=\"{base_path}").replace("src=\"/", f"src=\"{base_path}")
 
     dest_dir = os.path.dirname(dest_path)
     if not os.path.exists(dest_dir):
@@ -51,7 +57,7 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
     with open(dest_path, 'w') as dest_file:
         dest_file.write(output_html)
 
-def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str):
+def generate_pages_recursive(base_path: str, dir_path_content: str, template_path: str, dest_dir_path: str):
     if not os.path.exists(dir_path_content):
         raise Exception(f"Could not find source directory {dir_path_content}")
 
@@ -64,9 +70,9 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
         if os.path.isfile(source_path):
             (dest_file, _) = os.path.splitext(dest_path)
             dest_file += ".html"
-            generate_page(source_path, template_path, dest_file)
+            generate_page(base_path, source_path, template_path, dest_file)
         else:
             # Assume it's a directory
-            generate_pages_recursive(source_path, template_path, dest_path)
+            generate_pages_recursive(base_path, source_path, template_path, dest_path)
 
 main()
